@@ -152,7 +152,7 @@ public class GradeTableController {
 
   @PutMapping("/grade/{courseID}/{studentID}/{SchoolYear}/{semester}")
   public ResponseEntity<GradeTable> updateGrade(@PathVariable("courseID") long courseId,@PathVariable("studentID") long studentId,@PathVariable("SchoolYear") Integer schoolYear,@PathVariable("semester") String semester,@RequestBody GradeTable gradeTableRequest) {
-    GradeTable gradeTable = gradeTableRepository.findByCourseIdAndStudentIdAndSchoolYearAndSemester(studentId, courseId, schoolYear, semester);
+    GradeTable gradeTable = gradeTableRepository.findByCourseIdAndStudentIdAndSchoolYearAndSemester(courseId, studentId, schoolYear, semester);
             // .orElseThrow(() -> new ResourceNotFoundException("gradeTableId " + id + "not found"));
 
     // gradeTable.setStudent(gradeTableRequest.getStudent());
@@ -166,16 +166,16 @@ public class GradeTableController {
     // List<Percentage> percentagesR = PercentageRepository.findByCourseId(courseId);
 
     List<Mean> means = MeanRepository.findByStudentId(studentId);
-    List<Section> sections_with_student = null;   //sections where this student is subscribed
+    List<Section> sections_with_student = new ArrayList<Section>() ;   //sections where this student is subscribed
     means.forEach((n) -> sections_with_student.add(n.getSection()));
     List<Percentage> percentages = PercentageRepository.findByCourseId(courseId);
-    List<Section> sections_with_course = null;    //sections which contain this course
+    List<Section> sections_with_course = new ArrayList<Section>();    //sections which contain this course
     percentages.forEach((n) -> sections_with_course.add(n.getSection()));
 
 
     for (Section section: sections_with_student){
       if (sections_with_course.contains(section)){  //intersection of the 2 lists
-        List<Course> courses = null;
+        List<Course> courses = new ArrayList<Course>();
         PercentageRepository.findBySectionId(section.getId()).forEach((n) -> courses.add(n.getCourse()));
         Integer mean = 0;
         for (Course course : courses ){
@@ -185,7 +185,7 @@ public class GradeTableController {
             break;
           }
           Integer percent = percentageRepository.findBySectionIdAndCourseId(section.getId(),course.getId()).get(0).getPercentage();
-          mean += grade.getGrade()*percent;
+          mean += grade.getGrade()*percent/100;
 
 
         };

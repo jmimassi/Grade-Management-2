@@ -151,33 +151,67 @@ public class MeanController {
     //   MeanRequest.setSection(section);
     // return MeanRepository.save(MeanRequest);
 
-    // }).orElseThrow(() -> new ResourceNotFoundException("Not found student with id = " + sectionId));
-
+    // }).orElseThrow(() -> new ResourceNotFoundException("Not found student with id = " + sectionId));;
       Section section = sectionRepository.findById(sectionId).orElseThrow(() -> new ResourceNotFoundException("Not found student with id = " + sectionId));
       MeanRequest.setSection(section);
-      meanRepository.save(MeanRequest);
-
       Student student = studentRepository.findById(studentId).orElseThrow(() -> new ResourceNotFoundException("Not found student with id = " + studentId));
       MeanRequest.setStudent(student);
-      meanRepository.save(MeanRequest);
+
+    meanRepository.save(MeanRequest);
+
+
+
+
 
       List<Percentage> percentages = percentageRepository.findBySectionId(sectionId);
 
       for ( Percentage percent : percentages) {
         Long courseId = percent.getCourse().getId();
-        InscriptionCours(courseId,studentId,MeanRequest.getSchoolYear());
+        InscriptionCours(courseId,studentId,2022);
       };
 
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
 
+  @PostMapping("/sections/{sectionId}/students/{studentId}/{schoolYear}/means")
+  public ResponseEntity<Mean> createMeanwithSchoolYear(@PathVariable(value = "sectionId") Long sectionId,@PathVariable(value = "studentId") Long studentId,
+                                                       @PathVariable(value = "schoolYear") Integer schoolYear, @RequestBody Mean MeanRequest) {
+
+    // Mean mean = sectionRepository.findById(sectionId).map(section -> {
+    //   MeanRequest.setSection(section);
+    // return MeanRepository.save(MeanRequest);
+
+    // }).orElseThrow(() -> new ResourceNotFoundException("Not found student with id = " + sectionId));
+    MeanRequest.setMean(19);
+    Section section = sectionRepository.findById(sectionId).orElseThrow(() -> new ResourceNotFoundException("Not found student with id = " + sectionId));
+    MeanRequest.setSection(section);
+    MeanRequest.setSchoolYear(schoolYear);
+    Student student = studentRepository.findById(studentId).orElseThrow(() -> new ResourceNotFoundException("Not found student with id = " + studentId));
+    MeanRequest.setStudent(student);
+
+    meanRepository.save(MeanRequest);
+
+
+
+
+
+    List<Percentage> percentages = percentageRepository.findBySectionId(sectionId);
+
+    for ( Percentage percent : percentages) {
+      Long courseId = percent.getCourse().getId();
+      InscriptionCours(courseId,studentId,schoolYear);
+    };
+
+    return new ResponseEntity<>(HttpStatus.CREATED);
+  }
+
   @PutMapping("/means/{sectionId}/{studentId}")
   public ResponseEntity<Mean> updateMean(@PathVariable("sectionId") long sectionId,@PathVariable("studentId") long studentId, @RequestBody Mean MeanRequest) {
     Mean Mean = meanRepository.findByStudentIdAndSectionIdAndSchoolYear(studentId,sectionId,MeanRequest.getSchoolYear());
 
     Mean.setMean(MeanRequest.getMean());
-
+    Mean.setSchoolYear(MeanRequest.getSchoolYear());
     return new ResponseEntity<>(meanRepository.save(Mean), HttpStatus.OK);
   }
 
