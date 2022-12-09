@@ -78,7 +78,7 @@ public class Mean {
         return schoolYear;
     }
 
-    public void setSchoolYear(Integer SchoolYear) {
+    public void setSchoolYear(Integer schoolYear) {
         this.schoolYear = schoolYear;
     }
 

@@ -119,26 +119,20 @@ public class MeanController {
 
   public void InscriptionCours(Long courseId, Long studentId, Integer schoolYear){
 
-    for( int i=1; i<4; i++){
       GradeTable gradeTableRequest = new GradeTable();
 
       Course course = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFoundException("Not found student with id = " + courseId));
       gradeTableRequest.setCourse(course);
-      gradeTableRepository.save(gradeTableRequest);
-
       Student student = studentRepository.findById(studentId).orElseThrow(() -> new ResourceNotFoundException("Not found student with id = " + studentId));
       gradeTableRequest.setStudent(student);
-      gradeTableRepository.save(gradeTableRequest);
-
       gradeTableRequest.setSchoolYear(schoolYear);
+
+
+
+      gradeTableRequest.setSemester(course.getSemester());
       gradeTableRepository.save(gradeTableRequest);
 
-      gradeTableRequest.setSemester("Q"+String.valueOf(i));
-      gradeTableRepository.save(gradeTableRequest);
 
-
-
-    };
 
 
   };

@@ -179,13 +179,13 @@ public class GradeTableController {
         PercentageRepository.findBySectionId(section.getId()).forEach((n) -> courses.add(n.getCourse()));
         Integer mean = 0;
         for (Course course : courses ){
-          GradeTable grade = gradeTableRepository.findByCourseIdAndStudentIdAndSchoolYearAndSemester(course.getId(),studentId, schoolYear, semester);
+          GradeTable grade = gradeTableRepository.findByCourseIdAndStudentIdAndSchoolYearAndSemester(course.getId(),studentId, schoolYear, course.getSemester());
           if (grade.getGrade() == null) {
             mean = null;
             break;
           }
           Integer percent = percentageRepository.findBySectionIdAndCourseId(section.getId(),course.getId()).get(0).getPercentage();
-          mean += grade.getGrade()*percent/100;
+          mean += grade.getGrade()*percent  ;
 
 
         };
